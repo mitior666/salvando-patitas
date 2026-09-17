@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Salvando Patitas</title>
+  <style>
+    :root{
+      --green:#2f7d5a;
+      --light:#eef8f2;
+      --cream:#fffaf2;
+      --dark:#24352c;
+      --orange:#f29b50;
+      --white:#ffffff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--dark);
+      background:var(--cream);
+      line-height:1.6;
+    }
+    header{
+      position:sticky;top:0;z-index:10;
+      background:rgba(255,250,242,.96);
+      border-bottom:1px solid #e8e1d6;
+      backdrop-filter:blur(8px);
+    }
+    nav{
+      max-width:1100px;margin:auto;padding:15px 20px;
+      display:flex;align-items:center;justify-content:space-between;
+      gap:20px;
+    }
+    .logo{
+      display:flex;align-items:center;gap:10px;
+      font-size:1.35rem;font-weight:800;color:var(--green);
+    }
+    .paw{font-size:1.8rem}
+    nav a{
+      text-decoration:none;color:var(--dark);font-weight:700;
+      margin-left:18px;padding:9px 12px;border-radius:10px;
+      transition:.2s;
+    }
+    nav a:hover{color:var(--green);background:#e5f4ea}
+    nav a.active{color:var(--green);background:#e5f4ea}
+    .hero{
+      min-height:78vh;
+      display:grid;place-items:center;
+      padding:70px 20px;
+      background:
+        linear-gradient(rgba(47,125,90,.82),rgba(47,125,90,.82)),
+        radial-gradient(circle at 20% 20%,#b9e4ca,transparent 35%),
+        radial-gradient(circle at 80% 70%,#f7c58d,transparent 35%);
+      color:white;text-align:center;
+    }
+    .hero-content{max-width:800px}
+    .hero h1{font-size:clamp(2.7rem,7vw,5.5rem);line-height:1.05;margin-bottom:20px}
+    .hero p{font-size:1.2rem;max-width:650px;margin:0 auto 30px}
+    .buttons{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+    .btn{
+      display:inline-block;border:0;border-radius:999px;
+      padding:13px 23px;font-weight:800;text-decoration:none;
+      cursor:pointer;font-size:1rem;
+    }
+    .btn-primary{background:white;color:var(--green)}
+    .btn-secondary{background:var(--orange);color:white}
+    section{max-width:1100px;margin:auto;padding:75px 20px}
+    .section-title{text-align:center;margin-bottom:40px}
+    .section-title h2{font-size:2.2rem;margin-bottom:8px}
+    .section-title p{color:#66746c}
+    .cards{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    }
+    .card{
+      background:white;border:1px solid #eee5d9;border-radius:22px;
+      padding:28px;box-shadow:0 8px 25px rgba(40,50,40,.06);
+    }
+    .icon{font-size:2.5rem;margin-bottom:12px}
+    .card h3{margin-bottom:8px;color:var(--green)}
+    .donate-wrap{
+      background:var(--light);border-radius:28px;padding:40px;
+      display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center;
+    }
+    .donate-wrap h2{font-size:2.4rem;margin-bottom:12px}
+    .donation-options{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0;
+    }
+    .amount{
+      padding:13px;border:2px solid #cde4d5;background:white;
+      border-radius:12px;font-weight:800;cursor:pointer;color:var(--green);
+    }
+    .amount.selected,.amount:hover{background:var(--green);color:white}
+    .donation-form{
+      background:white;padding:25px;border-radius:20px;
+      box-shadow:0 8px 25px rgba(40,50,40,.07);
+    }
+    label{display:block;font-weight:700;margin:12px 0 6px}
+    input,select{
+      width:100%;padding:12px;border:1px solid #d8d8d8;
+      border-radius:10px;font-size:1rem;
+    }
+    .full{width:100%;margin-top:18px}
+    .shelters{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .shelter{
+      background:white;border-radius:20px;padding:24px;border:1px solid #eee5d9;
+    }
+    .tag{
+      display:inline-block;background:#e5f4ea;color:var(--green);
+      border-radius:999px;padding:5px 10px;font-size:.8rem;font-weight:800;
+      margin-bottom:10px;
+    }
+    .shelter p{margin:7px 0;color:#647067}
+    .notice{
+      margin-top:25px;padding:15px;border-radius:12px;
+      background:#fff5e9;color:#76502e;font-size:.9rem;
+    }
+    .contact{
+      text-align:center;background:var(--dark);color:white;
+      max-width:none;padding:55px 20px;
+    }
+    .contact-inner{max-width:800px;margin:auto}
+    footer{text-align:center;padding:22px;background:#1c2821;color:#dbe7df;font-size:.9rem}
+    @media(max-width:800px){
+      nav{flex-direction:column;align-items:flex-start}
+      nav a{margin:0 12px 0 0}
+      .cards,.shelters,.donate-wrap{grid-template-columns:1fr}
+      .donation-options{grid-template-columns:repeat(3,1fr)}
+    }
+    .modal{
+      display:none;position:fixed;inset:0;z-index:30;
+      background:rgba(0,0,0,.55);padding:20px;
+      align-items:center;justify-content:center;
+    }
+    .modal.show{display:flex}
+    .modal-box{
+      width:min(480px,100%);background:white;border-radius:22px;
+      padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.2);
+      text-align:center;
+    }
+    .modal-box h3{color:var(--green);font-size:1.7rem;margin-bottom:10px}
+    .close-modal{margin-top:15px}
+    .copied{background:#e5f4ea!important;color:var(--green)!important}
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo"><span class="paw">🐾</span> Salvando Patitas</div>
+    <div>
+      <a href="#inicio" class="nav-link active">Inicio</a>
+      <a href="#ayuda" class="nav-link">Cómo ayudar</a>
+      <a href="#donaciones" class="nav-link">Donaciones</a>
+      <a href="#albergues" class="nav-link">Albergues</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="hero-content">
+      <h1>Salvando Patitas</h1>
+      <p>Una pequeña ayuda puede convertirse en una segunda oportunidad. Apoyemos a los animales que necesitan un hogar, alimento y cuidados.</p>
+      <div class="buttons">
+        <a class="btn btn-primary" href="#donaciones">Quiero donar</a>
+        <a class="btn btn-secondary" href="#ayuda">Cómo ayudar</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="ayuda">
+    <div class="section-title">
+      <h2>¿Cómo puedes ayudar?</h2>
+      <p>No necesitas hacer algo enorme para generar un cambio.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="icon">💰</div>
+        <h3>Donaciones</h3>
+        <p>Apoya a fundaciones y albergues para cubrir alimentación, medicamentos y cuidados veterinarios.</p>
+      </article>
+      <article class="card">
+        <div class="icon">🏠</div>
+        <h3>Adopción responsable</h3>
+        <p>Considera adoptar y ofrecer un hogar seguro a un animal que necesita una familia.</p>
+      </article>
+      <article class="card">
+        <div class="icon">🤝</div>
+        <h3>Voluntariado</h3>
+        <p>Comparte tu tiempo ayudando en refugios, campañas de adopción y actividades de protección animal.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="donaciones">
+    <div class="donate-wrap">
+      <div>
+        <h2>Tu donación salva patitas</h2>
+        <p>Cada aporte puede ayudar a que una fundación o albergue tenga recursos para cuidar a más animales.</p>
+        <div class="notice">
+          Importante: esta página es un prototipo. Los datos de pago son demostrativos y no procesan dinero real.
+        </div>
+      </div>
+
+      <form class="donation-form" onsubmit="donar(event)" id="donationForm">
+        <label for="fundacion">¿A quién quieres apoyar?</label>
+        <select id="fundacion">
+          <option>Fundación Huellitas</option>
+          <option>Albergue Patitas Felices</option>
+          <option>Rescate Animal Esperanza</option>
+        </select>
+
+        <label>Monto de donación</label>
+        <div class="donation-options">
+          <button type="button" class="amount" onclick="seleccionar(this,10)">S/ 10</button>
+          <button type="button" class="amount" onclick="seleccionar(this,25)">S/ 25</button>
+          <button type="button" class="amount" onclick="seleccionar(this,50)">S/ 50</button>
+        </div>
+
+        <input type="hidden" id="monto" value="10">
+
+        <label for="nombre">Tu nombre</label>
+        <input id="nombre" type="text" placeholder="Ej. Juan" required>
+
+        <button class="btn btn-secondary full" type="submit">Continuar con la donación</button>
+        <p id="mensaje" style="margin-top:12px;font-weight:700;color:#2f7d5a"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="albergues">
+    <div class="section-title">
+      <h2>Fundaciones y albergues</h2>
+      <p>Ejemplos de organizaciones que puedes mostrar en tu proyecto.</p>
+    </div>
+    <div class="shelters">
+      <article class="shelter">
+        <span class="tag">PERROS Y GATOS</span>
+        <h3>Fundación Huellitas</h3>
+        <p>Rescate, recuperación y búsqueda de hogares responsables.</p>
+        <strong>Necesitan:</strong>
+        <p>Alimento y atención veterinaria.</p>
+      </article>
+      <article class="shelter">
+        <span class="tag">ALBERGUE</span>
+        <h3>Patitas Felices</h3>
+        <p>Albergue dedicado al cuidado temporal de animales rescatados.</p>
+        <strong>Necesitan:</strong>
+        <p>Medicinas, alimento y voluntarios.</p>
+      </article>
+      <article class="shelter">
+        <span class="tag">RESCATE</span>
+        <h3>Rescate Animal Esperanza</h3>
+        <p>Apoya casos de animales que necesitan atención y recuperación.</p>
+        <strong>Necesitan:</strong>
+        <p>Donaciones y hogares temporales.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="contact">
+    <div class="contact-inner">
+      <h2>Juntos podemos hacer la diferencia</h2>
+      <p>Comparte Salvando Patitas con tus amigos y ayuda a que más personas conozcan la importancia de proteger y cuidar a los animales.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2026 Salvando Patitas — Proyecto de protección animal
+</footer>
+
+<div class="modal" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box">
+    <h3 id="modalTitle">Donación preparada</h3>
+    <p id="modalText"></p>
+    <p style="margin-top:10px;color:#66746c">En una versión real, aquí se conectaría una pasarela de pago segura.</p>
+    <button class="btn btn-secondary close-modal" type="button" onclick="cerrarModal()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+  let montoActual = 10;
+
+  function seleccionar(boton, monto){
+    document.querySelectorAll('.amount').forEach(b => b.classList.remove('selected'));
+    boton.classList.add('selected');
+    montoActual = monto;
+    document.getElementById('monto').value = monto;
+  }
+
+  function donar(event){
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombre').value.trim();
+    const fundacion = document.getElementById('fundacion').value;
+
+    if (!nombre) {
+      document.getElementById('nombre').focus();
+      return;
+    }
+
+    document.getElementById('mensaje').textContent =
+      `Donación seleccionada: S/ ${montoActual}`;
+
+    document.getElementById('modalText').textContent =
+      `Gracias, ${nombre}. Has elegido donar S/ ${montoActual} a ${fundacion}.`;
+
+    document.getElementById('donationModal').classList.add('show');
+  }
+
+  function cerrarModal(){
+    document.getElementById('donationModal').classList.remove('show');
+  }
+
+  document.getElementById('donationModal').addEventListener('click', function(e){
+    if(e.target === this) cerrarModal();
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') cerrarModal();
+  });
+
+  document.querySelector('.amount').classList.add('selected');
+
+  // Botones del menú superior: cambian de sección y marcan dónde estás.
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        navLinks.forEach(item => item.classList.remove('active'));
+        this.classList.add('active');
+      }
+    });
+  });
+
+  // Actualiza el botón activo mientras bajas por la página.
+  const sections = document.querySelectorAll('main section[id]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle(
+            'active',
+            link.getAttribute('href') === '#' + entry.target.id
+          );
+        });
+      }
+    });
+  }, { threshold: 0.45 });
+
+  sections.forEach(section => observer.observe(section));
+</script>
+
+</body>
+</html>
